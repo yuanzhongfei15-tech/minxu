@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://haokazhijia.eu.cc/sitemap.xml
+
+# Disallow
+Disallow: /js/
+Disallow: /css/

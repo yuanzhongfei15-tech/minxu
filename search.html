@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索单词 - 每日单词 | 免费英语词汇搜索</title>
+    <meta name="description" content="在每日单词搜索英语单词，快速查找单词释义、例句和发音。支持中英文搜索，帮助你高效学习英语词汇。">
+    <meta name="keywords" content="英语单词搜索,查单词,英语词典,单词释义,例句">
+    <meta name="author" content="Daily Words">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://haokazhijia.eu.cc/search.html">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span class="logo-text">每日单词</span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="category.html?type=high-frequency" class="nav-link">高频词汇</a>
+                    <a href="category.html?type=business" class="nav-link">职场英语</a>
+                    <a href="category.html?type=travel" class="nav-link">旅游英语</a>
+                    <a href="category.html?type=daily" class="nav-link">日常口语</a>
+                    <a href="favorites.html" class="nav-link">我的收藏</a>
+                </div>
+                <div class="nav-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="搜索单词..." autocomplete="off">
+                        <button class="search-btn" onclick="performSearch()">🔍</button>
+                    </div>
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" class="mobile-nav-link">首页</a>
+        <a href="category.html?type=high-frequency" class="mobile-nav-link">高频词汇</a>
+        <a href="category.html?type=business" class="mobile-nav-link">职场英语</a>
+        <a href="category.html?type=travel" class="mobile-nav-link">旅游英语</a>
+        <a href="category.html?type=daily" class="mobile-nav-link">日常口语</a>
+        <a href="favorites.html" class="mobile-nav-link">我的收藏</a>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <div class="container">
+            <!-- 搜索头部 -->
+            <div class="search-header">
+                <h1 class="search-title">
+                    搜索结果: "<span class="search-query" id="searchQuery"></span>"
+                </h1>
+                <p class="search-count" id="searchCount"></p>
+            </div>
+
+            <!-- 搜索框（大） -->
+            <div class="search-box-large" style="margin-bottom: 32px;">
+                <div class="search-box" style="width: 100%;">
+                    <input type="text" id="searchInputLarge" placeholder="搜索单词..." autocomplete="off" style="width: 100%; padding: 16px 48px 16px 20px; font-size: 1.125rem;">
+                    <button class="search-btn" onclick="performSearch()" style="right: 12px; font-size: 1.25rem;">🔍</button>
+                </div>
+            </div>
+
+            <!-- 搜索结果 -->
+            <div id="searchResults" class="word-list">
+                <!-- 动态加载 -->
+            </div>
+
+            <!-- 无结果提示 -->
+            <div id="noResults" class="no-results" style="display: none;">
+                <div class="no-results-icon">🔍</div>
+                <h3 class="no-results-title">未找到相关单词</h3>
+                <p class="no-results-text">试试其他关键词，或浏览我们的<a href="category.html?type=high-frequency">单词分类</a></p>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>关于我们</h4>
+                    <p>每日单词是一个免费的英语学习平台，致力于帮助学习者轻松提升英语词汇量。</p>
+                </div>
+                <div class="footer-section">
+                    <h4>快速链接</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="category.html?type=high-frequency">高频词汇</a></li>
+                        <li><a href="favorites.html">我的收藏</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>联系方式</h4>
+                    <p>如有建议或反馈，欢迎联系我们。</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 每日单词 Daily Words. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/words-data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取搜索参数
+            const query = getUrlParam('q');
+            
+            if (query) {
+                document.getElementById('searchInput').value = query;
+                document.getElementById('searchInputLarge').value = query;
+                performSearch(query);
+            } else {
+                document.getElementById('searchQuery').textContent = '';
+                document.getElementById('searchCount').textContent = '请输入搜索关键词';
+                document.getElementById('noResults').style.display = 'block';
+            }
+            
+            // 搜索框回车事件
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+            
+            document.getElementById('searchInputLarge').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        });
+
+        // 执行搜索
+        function performSearch(query) {
+            if (!query) {
+                query = document.getElementById('searchInputLarge').value.trim();
+            }
+            
+            if (!query) {
+                return;
+            }
+            
+            // 更新URL
+            if (query !== getUrlParam('q')) {
+                window.history.replaceState({}, '', `search.html?q=${encodeURIComponent(query)}`);
+            }
+            
+            // 更新页面标题
+            setPageTitle(
+                `"${query}" 的搜索结果 - 每日单词`,
+                `搜索 "${query}" 的英语单词，查看释义、例句和发音。`
+            );
+            
+            // 显示搜索词
+            document.getElementById('searchQuery').textContent = query;
+            
+            // 搜索单词
+            const results = searchWords(query);
+            
+            // 显示结果数量
+            document.getElementById('searchCount').textContent = `找到 ${results.length} 个相关单词`;
+            
+            // 渲染结果
+            const resultsContainer = document.getElementById('searchResults');
+            const noResultsContainer = document.getElementById('noResults');
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '';
+                noResultsContainer.style.display = 'block';
+            } else {
+                noResultsContainer.style.display = 'none';
+                resultsContainer.innerHTML = results.map(word => renderWordCard(word)).join('');
+            }
+        }
+
+        // 移动端菜单切换
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

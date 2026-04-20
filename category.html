@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词分类 - 每日单词 | 高频词汇、职场英语、旅游英语、日常口语</title>
+    <meta name="description" content="浏览每日单词的分类词汇库，包括高频词汇、职场英语、旅游英语和日常口语。系统学习英语单词，提升词汇量。">
+    <meta name="keywords" content="英语单词分类,高频词汇,职场英语,旅游英语,日常口语,英语学习">
+    <meta name="author" content="Daily Words">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://haokazhijia.eu.cc/category.html">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span class="logo-text">每日单词</span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="category.html?type=high-frequency" class="nav-link" data-category="high-frequency">高频词汇</a>
+                    <a href="category.html?type=business" class="nav-link" data-category="business">职场英语</a>
+                    <a href="category.html?type=travel" class="nav-link" data-category="travel">旅游英语</a>
+                    <a href="category.html?type=daily" class="nav-link" data-category="daily">日常口语</a>
+                    <a href="favorites.html" class="nav-link">我的收藏</a>
+                </div>
+                <div class="nav-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="搜索单词..." autocomplete="off">
+                        <button class="search-btn" onclick="searchWord()">🔍</button>
+                    </div>
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" class="mobile-nav-link">首页</a>
+        <a href="category.html?type=high-frequency" class="mobile-nav-link" data-category="high-frequency">高频词汇</a>
+        <a href="category.html?type=business" class="mobile-nav-link" data-category="business">职场英语</a>
+        <a href="category.html?type=travel" class="mobile-nav-link" data-category="travel">旅游英语</a>
+        <a href="category.html?type=daily" class="mobile-nav-link" data-category="daily">日常口语</a>
+        <a href="favorites.html" class="mobile-nav-link">我的收藏</a>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <div class="container">
+            <!-- 分类头部 -->
+            <div class="category-header" id="categoryHeader">
+                <!-- 动态加载 -->
+            </div>
+
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="filter-options">
+                    <button class="filter-btn active" onclick="filterWords('all')">全部</button>
+                    <button class="filter-btn" onclick="filterWords('verb')">动词</button>
+                    <button class="filter-btn" onclick="filterWords('noun')">名词</button>
+                    <button class="filter-btn" onclick="filterWords('adj')">形容词</button>
+                    <button class="filter-btn" onclick="filterWords('phrase')">短语</button>
+                </div>
+                <select class="sort-select" id="sortSelect" onchange="sortWords()">
+                    <option value="default">默认排序</option>
+                    <option value="az">A-Z</option>
+                    <option value="za">Z-A</option>
+                </select>
+            </div>
+
+            <!-- 单词列表 -->
+            <div id="wordsContainer" class="word-list">
+                <!-- 动态加载 -->
+            </div>
+
+            <!-- 分页 -->
+            <div id="pagination" class="pagination">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>关于我们</h4>
+                    <p>每日单词是一个免费的英语学习平台，致力于帮助学习者轻松提升英语词汇量。</p>
+                </div>
+                <div class="footer-section">
+                    <h4>快速链接</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="category.html?type=high-frequency">高频词汇</a></li>
+                        <li><a href="favorites.html">我的收藏</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>联系方式</h4>
+                    <p>如有建议或反馈，欢迎联系我们。</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 每日单词 Daily Words. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/words-data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        let currentCategory = '';
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let wordsPerPage = 12;
+        let allCategoryWords = [];
+        let filteredWords = [];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取分类参数
+            const category = getUrlParam('type') || 'high-frequency';
+            currentCategory = category;
+            
+            // 加载分类信息
+            loadCategoryInfo(category);
+            
+            // 加载单词列表
+            loadCategoryWords(category);
+            
+            // 更新导航激活状态
+            updateNavActiveState(category);
+            
+            // 搜索框回车事件
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWord();
+                }
+            });
+        });
+
+        // 加载分类信息
+        function loadCategoryInfo(category) {
+            const info = getCategoryInfo(category);
+            if (!info) return;
+            
+            const header = document.getElementById('categoryHeader');
+            header.innerHTML = `
+                <h1 class="category-title">
+                    <span>${info.icon}</span>
+                    ${info.name}
+                </h1>
+                <p class="category-description">${info.description}</p>
+            `;
+            
+            // 更新页面标题
+            setPageTitle(
+                `${info.name} - 每日单词 | 免费英语学习`,
+                `${info.description}，每日单词提供${info.count}+个${info.name}，帮助你系统学习英语。`
+            );
+        }
+
+        // 加载分类单词
+        function loadCategoryWords(category) {
+            allCategoryWords = getWordsByCategory(category);
+            filteredWords = [...allCategoryWords];
+            currentPage = 1;
+            renderWords();
+        }
+
+        // 渲染单词列表
+        function renderWords() {
+            const container = document.getElementById('wordsContainer');
+            const start = (currentPage - 1) * wordsPerPage;
+            const end = start + wordsPerPage;
+            const pageWords = filteredWords.slice(start, end);
+            
+            if (pageWords.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <div class="no-results-icon">📭</div>
+                        <h3 class="no-results-title">暂无单词</h3>
+                        <p class="no-results-text">该分类下暂时没有单词</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = pageWords.map(word => renderWordCard(word)).join('');
+            }
+            
+            // 渲染分页
+            const totalPages = Math.ceil(filteredWords.length / wordsPerPage);
+            renderPagination(currentPage, totalPages, 'pagination', 'goToPage');
+        }
+
+        // 跳转到指定页
+        function goToPage(page) {
+            currentPage = page;
+            renderWords();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 筛选单词
+        function filterWords(type) {
+            currentFilter = type;
+            currentPage = 1;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 筛选单词
+            if (type === 'all') {
+                filteredWords = [...allCategoryWords];
+            } else {
+                filteredWords = allCategoryWords.filter(word => {
+                    if (type === 'verb') {
+                        return word.meanings.some(m => m.pos.includes('v.'));
+                    } else if (type === 'noun') {
+                        return word.meanings.some(m => m.pos.includes('n.'));
+                    } else if (type === 'adj') {
+                        return word.meanings.some(m => m.pos.includes('adj.'));
+                    } else if (type === 'phrase') {
+                        return word.word.includes(' ');
+                    }
+                    return true;
+                });
+            }
+            
+            renderWords();
+        }
+
+        // 排序单词
+        function sortWords() {
+            const sortType = document.getElementById('sortSelect').value;
+            
+            if (sortType === 'az') {
+                filteredWords.sort((a, b) => a.word.localeCompare(b.word));
+            } else if (sortType === 'za') {
+                filteredWords.sort((a, b) => b.word.localeCompare(a.word));
+            } else {
+                // 默认排序（按ID）
+                filteredWords.sort((a, b) => a.id.localeCompare(b.id));
+            }
+            
+            currentPage = 1;
+            renderWords();
+        }
+
+        // 更新导航激活状态
+        function updateNavActiveState(category) {
+            document.querySelectorAll('.nav-link[data-category], .mobile-nav-link[data-category]').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.category === category) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // 搜索功能
+        function searchWord() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            }
+        }
+
+        // 移动端菜单切换
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

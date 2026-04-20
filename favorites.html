@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的收藏 - 每日单词 | 收藏的英语单词</title>
+    <meta name="description" content="查看你在每日单词收藏的英语单词，随时复习和巩固。收藏的单词会保存在本地，方便你持续学习。">
+    <meta name="keywords" content="收藏单词,英语单词本,单词复习,英语学习">
+    <meta name="author" content="Daily Words">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://haokazhijia.eu.cc/favorites.html">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon">📚</span>
+                    <span class="logo-text">每日单词</span>
+                </a>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="category.html?type=high-frequency" class="nav-link">高频词汇</a>
+                    <a href="category.html?type=business" class="nav-link">职场英语</a>
+                    <a href="category.html?type=travel" class="nav-link">旅游英语</a>
+                    <a href="category.html?type=daily" class="nav-link">日常口语</a>
+                    <a href="favorites.html" class="nav-link active">我的收藏</a>
+                </div>
+                <div class="nav-actions">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="搜索单词..." autocomplete="off">
+                        <button class="search-btn" onclick="searchWord()">🔍</button>
+                    </div>
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" class="mobile-nav-link">首页</a>
+        <a href="category.html?type=high-frequency" class="mobile-nav-link">高频词汇</a>
+        <a href="category.html?type=business" class="mobile-nav-link">职场英语</a>
+        <a href="category.html?type=travel" class="mobile-nav-link">旅游英语</a>
+        <a href="category.html?type=daily" class="mobile-nav-link">日常口语</a>
+        <a href="favorites.html" class="mobile-nav-link active">我的收藏</a>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="main">
+        <div class="container">
+            <!-- 页面头部 -->
+            <div class="search-header">
+                <h1 class="search-title">我的收藏</h1>
+                <p class="search-count" id="favoritesCount">已收藏 0 个单词</p>
+            </div>
+
+            <!-- 收藏列表 -->
+            <div id="favoritesContainer" class="word-list">
+                <!-- 动态加载 -->
+            </div>
+
+            <!-- 空状态 -->
+            <div id="emptyState" class="favorites-empty" style="display: none;">
+                <div class="favorites-empty-icon">⭐</div>
+                <h3 class="favorites-empty-title">还没有收藏单词</h3>
+                <p class="favorites-empty-text">在浏览单词时点击收藏按钮，将单词添加到收藏夹</p>
+                <a href="index.html" class="btn-primary">
+                    <span>📚</span> 开始学习
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>关于我们</h4>
+                    <p>每日单词是一个免费的英语学习平台，致力于帮助学习者轻松提升英语词汇量。</p>
+                </div>
+                <div class="footer-section">
+                    <h4>快速链接</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="category.html?type=high-frequency">高频词汇</a></li>
+                        <li><a href="favorites.html">我的收藏</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>联系方式</h4>
+                    <p>如有建议或反馈，欢迎联系我们。</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 每日单词 Daily Words. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/words-data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFavorites();
+            
+            // 搜索框回车事件
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWord();
+                }
+            });
+        });
+
+        // 加载收藏列表
+        function loadFavorites() {
+            const favorites = JSON.parse(localStorage.getItem('favoriteWords') || '[]');
+            const allWords = getAllWords();
+            
+            // 获取收藏的单词详情
+            const favoriteWords = favorites.map(id => allWords.find(w => w.id === id)).filter(w => w);
+            
+            // 更新计数
+            document.getElementById('favoritesCount').textContent = `已收藏 ${favoriteWords.length} 个单词`;
+            
+            // 渲染列表
+            const container = document.getElementById('favoritesContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (favoriteWords.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+                container.innerHTML = favoriteWords.map(word => renderWordCard(word)).join('');
+            }
+        }
+
+        // 搜索功能
+        function searchWord() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            }
+        }
+
+        // 移动端菜单切换
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
