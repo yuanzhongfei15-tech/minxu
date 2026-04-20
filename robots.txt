@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://haokazhijia.eu.cc/sitemap.xml
+Sitemap: https://kejivvv.ccwu.cc/sitemap.xml
 
 # Disallow
 Disallow: /js/
